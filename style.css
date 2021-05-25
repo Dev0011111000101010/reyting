@@ -1,0 +1,607 @@
+/*!
+Theme Name: referendum
+Theme URI: http://underscores.me/
+Author: Underscores.me
+Author URI: http://underscores.me/
+Description: Description
+Version: 1.0.0
+Tested up to: 5.4
+Requires PHP: 5.6
+License: GNU General Public License v2 or later
+License URI: LICENSE
+Text Domain: referendum
+Tags: custom-background, custom-logo, custom-menu, featured-images, threaded-comments, translation-ready
+
+This theme, like WordPress, is licensed under the GPL.
+Use it to make something cool, have fun, and share what you've learned.
+
+referendum is based on Underscores https://underscores.me/, (C) 2012-2020 Automattic, Inc.
+Underscores is distributed under the terms of the GNU GPL v2 or later.
+
+Normalizing styles have been helped along thanks to the fine work of
+Nicolas Gallagher and Jonathan Neal https://necolas.github.io/normalize.css/
+*/
+:root {
+  --bs-orange: #ffa726;
+  --bs-blue: #6e9fec;
+  --bs-font-sans-serif: Arial, sans-serif;
+}
+
+#rcl-office {
+  font-size: 18px;
+}
+
+img {
+  max-width: 100%;
+}
+
+body.logged-in {
+  padding-top: 20px;
+}
+
+body.admin-bar .fixed-top {
+  top: 32px;
+}
+
+body:not(.logged-in) .switcher {
+  margin-right: 10px;
+}
+
+body {
+  padding-top: 60px;
+  margin: 0;
+}
+
+.no-gutters {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+@media (max-width: 979px) {
+  body {
+    padding-top: 40px;
+  }
+}
+.btn {
+  width: -webkit-min-content;
+  width: -moz-min-content;
+  width: min-content;
+  white-space: nowrap;
+  text-transform: uppercase;
+  border-radius: 0;
+  font-size: 14px;
+}
+.btn svg {
+  width: 14px;
+  height: 14px;
+  margin-left: 10px;
+  fill: #fff;
+}
+.btn.btn-blue {
+  background-color: var(--bs-blue);
+  color: #fff !important;
+  border-color: var(--bs-blue);
+}
+.btn.btn-blue:hover {
+  opacity: 0.9;
+}
+
+a {
+  color: var(--bs-blue);
+}
+a:hover {
+  color: var(--bs-orange);
+}
+
+body:not(.wp-admin) .rcl-bttn.rcl-bttn__type-primary {
+  color: #fff;
+}
+
+.share-btn svg {
+  max-width: 20px;
+}
+
+nav.navbar {
+  width: calc(100vw - 16px);
+}
+nav.navbar a {
+  color: #fff;
+}
+nav.navbar .social-icons {
+  margin-left: 10px;
+}
+nav.navbar .social-icons svg {
+  width: 25px;
+}
+nav.navbar .rcb_line span {
+  margin: 0 0 0 8px;
+  vertical-align: text-top;
+}
+nav.navbar .rcb_right_menu {
+  border-left: 2px solid transparent;
+  box-sizing: unset;
+  float: right;
+  height: 36px;
+  margin: 0 10px 0 30px;
+  position: relative;
+  width: 36px;
+}
+nav.navbar .rcb_right_menu .fa-ellipsis-h {
+  color: var(--bs-orange);
+  font-size: 22px;
+  left: 10px;
+  pointer-events: none;
+  position: absolute;
+  top: 14px;
+  z-index: 2;
+}
+nav.navbar .rcb_right_menu img {
+  border-radius: 0;
+  border: none;
+  height: 36px;
+  max-width: 36px;
+  width: 36px;
+}
+nav.navbar .pr_sub_menu {
+  background: rgba(0, 0, 0, 0.7);
+  border-top: 2px solid var(--bs-orange);
+  display: block;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 54px;
+  transform: translate3d(0px, 0px, 0px);
+  transition: all 0.2s ease-in-out 0s;
+  visibility: hidden;
+  width: 200px;
+}
+nav.navbar .pr_sub_menu .rcb_line {
+  padding: 5px 5px 3px 9px;
+}
+nav.navbar .pr_sub_menu .rcb_line .rcli {
+  color: #c8c8c8;
+  font-size: 22px;
+}
+nav.navbar .pr_sub_menu .rcb_line > a {
+  align-items: center;
+  display: flex;
+  text-decoration: none;
+}
+nav.navbar a:hover, nav.navbar nav a {
+  text-decoration: none;
+  color: #fff;
+}
+
+nav .rcb_right_menu:hover .pr_sub_menu {
+  cursor: default;
+  opacity: 1;
+  transform: translateY(-18px);
+  visibility: visible;
+}
+
+nav .rcb_line:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+nav .rcb_right_menu:hover {
+  border-left: 2px solid var(--bs-orange);
+  cursor: pointer;
+}
+
+nav .rcb_right_menu:hover .fa-ellipsis-h {
+  display: none;
+}
+
+.userlist.rows-list .userlist_top {
+  padding-left: 5px;
+}
+
+.searchandfilter h4 {
+  font-weight: bold;
+}
+.searchandfilter ul li li {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.searchandfilter ul li li .sf-input-checkbox {
+  flex-basis: 11px;
+}
+.searchandfilter ul li li label {
+  flex-basis: calc(100% - 16px);
+}
+.searchandfilter ul li li .children {
+  width: 100%;
+}
+
+.home-post {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.home-post iframe {
+  width: 100%;
+  max-width: 100%;
+}
+
+#respond {
+  margin-top: 30px;
+}
+
+ol, ul {
+  padding-left: 10px;
+}
+
+.searchandfilter ul li ul li ul {
+  margin-left: 0;
+}
+.searchandfilter ul li.sf-level-1 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.wpulike.wpulike-default {
+  width: -webkit-min-content;
+  width: -moz-min-content;
+  width: min-content;
+}
+
+.sf-field-submit input {
+  display: inline-block;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  background-color: transparent;
+  border: 1px solid #212529;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  color: #212529;
+}
+.sf-field-submit input:hover {
+  color: #fff;
+  background-color: #212529;
+  border-color: #212529;
+}
+
+@media (min-width: 981px) {
+  .searchandfilter {
+    display: block !important;
+  }
+}
+.wp-pagenavi {
+  font-size: 20px;
+  margin: 0 auto;
+}
+.wp-pagenavi .pages {
+  margin-right: 10px;
+}
+.wp-pagenavi .current, .wp-pagenavi .page {
+  padding: 0.5em;
+}
+
+.found-results {
+  margin-bottom: 10px;
+}
+
+.main-content {
+  background: #fff;
+  padding: 0 15px;
+}
+
+.labels-list {
+  margin-bottom: 5px;
+}
+.labels-list a + a {
+  margin-left: 5px;
+  display: inline-block;
+}
+
+.post-categories a + a {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 512'%3E%3Cpath d='M166.9 264.5l-117.8 116c-4.7 4.7-12.3 4.7-17 0l-7.1-7.1c-4.7-4.7-4.7-12.3 0-17L127.3 256 25.1 155.6c-4.7-4.7-4.7-12.3 0-17l7.1-7.1c4.7-4.7 12.3-4.7 17 0l117.8 116c4.6 4.7 4.6 12.3-.1 17z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 6px center;
+  padding-left: 20px;
+  background-size: 9px;
+  display: inline-block;
+}
+
+.sf-field-taxonomy-strana_golosovaniia {
+  display: none !important;
+}
+
+.loop-post_title a, .single-post-title a {
+  text-decoration: none;
+  color: #212529;
+}
+
+.loop-post-cont .loop-post-img {
+  flex-basis: 200px;
+}
+.loop-post-cont .loop-post-img img {
+  height: auto;
+  object-fit: cover;
+}
+.loop-post-cont .loop-post-text {
+  flex-basis: calc(100% - 210px);
+  flex-grow: 1;
+}
+
+#rcl-office {
+  background: #fff;
+  box-shadow: none;
+}
+
+body .rcl-bttn.rcl-bttn__type-primary {
+  background-color: var(--bs-blue);
+}
+
+a.recall-button, span.recall-button, .recall-button.rcl-upload-button, input[type=submit].recall-button, input[type=submit] .recall-button, input[type=button].recall-button, input[type=button] .recall-button, a.recall-button:hover, .recall-button.rcl-upload-button:hover, input[type=submit].recall-button:hover, input[type=submit] .recall-button:hover, input[type=button].recall-button:hover, input[type=button] .recall-button:hover {
+  background: var(--bs-blue);
+}
+
+#lk-menu a:hover {
+  background: var(--bs-blue);
+  opacity: 0.5;
+}
+
+.top-post-title {
+  font-size: 22px;
+}
+
+.share-btn {
+  max-width: calc(100% - 116px);
+  padding-left: 0;
+}
+
+.single-post img {
+  max-width: 100%;
+}
+
+#filter-btn svg {
+  margin-right: 5px;
+  margin-left: 0;
+}
+
+.country-changer {
+  max-width: calc(100% - 250px);
+}
+.country-changer b {
+  margin-right: 10px;
+}
+
+.filter-close {
+  display: none;
+  float: right;
+}
+.filter-close svg {
+  width: 16px;
+}
+
+.link-telegram b {
+  flex-basis: 200px;
+}
+.link-telegram .wptelegram-login-output-wrap {
+  flex-basis: calc(100% - 200px);
+  flex-grow: 1;
+}
+
+.btn-yellow {
+  background: #f17515;
+  transition: 0.3s all;
+  border-color: yellow;
+  color: #fff;
+  border-radius: 5px;
+}
+.btn-yellow:hover {
+  color: #000000;
+  opacity: 1;
+  transition: 3s all;
+  background: #26db1f;
+}
+
+#rcl-office .recall_content_block {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.rcl-content .rcl-content-area {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.home-filter {
+  -webkit-box-shadow: 4px 4px 12px 5px rgba(204, 204, 204, 0.2);
+  -moz-box-shadow: 4px 4px 12px 5px rgba(204, 204, 204, 0.2);
+  box-shadow: 4px 4px 12px 5px rgba(204, 204, 204, 0.2);
+}
+
+.rcl-notice__text {
+  line-height: 1.2;
+}
+.rcl-notice__text div.ul-style {
+  margin-top: 10px;
+}
+
+.lawyer-profile hr {
+  margin-top: 30px;
+}
+.lawyer-profile .lawyer-subtree {
+  padding: 15px 0 15px 20px;
+  width: 100%;
+}
+.lawyer-profile .lawyer-profile-field {
+  display: flex;
+  flex-wrap: wrap;
+}
+.lawyer-profile .lawyer-profile-field .lawyer-field-label {
+  font-weight: bold;
+  min-width: 200px;
+  max-width: 200px;
+  margin-right: 15px;
+}
+.lawyer-profile .lawyer-profile-field + .lawyer-profile-field {
+  margin-top: 10px;
+}
+
+@media (min-width: 979px) {
+  .col-lg-4 {
+    flex: 0 0 auto;
+    width: 33.3333333333%;
+  }
+
+  .col-lg-5 {
+    flex: 0 0 auto;
+    width: 41.6666666667%;
+  }
+
+  .col-lg-8 {
+    flex: 0 0 auto;
+    width: 66.6666666667%;
+  }
+
+  .container {
+    max-width: 960px;
+  }
+}
+@media (max-width: 979px) {
+  body {
+    font-size: 14px;
+  }
+
+  .t-home-post-in .bottom-share-btn {
+    padding: 0;
+  }
+
+  .searchandfilter h4 {
+    padding-bottom: 4px;
+  }
+
+  nav {
+    width: 100vw;
+  }
+
+  .country-changer {
+    max-width: 100%;
+  }
+
+  .filter-close {
+    display: block;
+  }
+
+  .main-content {
+    padding: 0;
+  }
+
+  .search-filter-results, #posts-list {
+    margin-top: 10px;
+  }
+
+  .desktop-modal {
+    display: none;
+  }
+
+  .home-twobtns {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  nav.navbar .social-icons {
+    margin-left: 0;
+    margin-top: 5px;
+  }
+
+  .switcher .option a:hover {
+    color: #000;
+  }
+
+  .loop-post-cont .loop-post-img {
+    flex-basis: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .loop-post-cont .loop-post-img img {
+    height: auto;
+    object-fit: cover;
+  }
+
+  nav.navbar {
+    width: 100vw;
+  }
+}
+@media (max-width: 600px) {
+  nav .rcb_right_menu {
+    margin: 0 5px 0 0;
+  }
+}
+@media (max-width: 480px) {
+  #rcl-office {
+    font-size: 15px;
+  }
+
+  .home-twobtns {
+    flex-wrap: wrap;
+    flex-direction: column-reverse;
+    align-items: center;
+  }
+  .home-twobtns #filter-btn {
+    margin-top: 7px;
+  }
+
+  nav .rcb_right_menu {
+    margin: 0;
+  }
+  nav .rcli {
+    font-size: 27px;
+  }
+
+  .lawyer-profile .lawyer-subtree {
+    padding: 10px 0 10px 10px;
+  }
+}
+#main-filter {
+  border: 4px solid ButtonShadow;
+  border-radius: 15px;
+}
+
+main {
+  margin-top: 20px;
+}
+
+.sf-field-search label, .sf-field-search input {
+  width: 100%;
+}
+
+.searchandfilter select.sf-input-select {
+  padding: 10px 0;
+}
+
+.office-sunshine #lk-conteyner {
+  background: none;
+}
+
+#rcl-office h3 {
+  font-size: 1.75rem;
+}
+
+#rcl-office h3 {
+  margin-bottom: 15px;
+  font-size: 1.75rem;
+}
+
+@media (min-width: 1200px) {
+  #rcl-office h3 {
+    font-size: 1.75rem;
+  }
+}
+
+/*# sourceMappingURL=style.css.map */
