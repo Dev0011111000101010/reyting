@@ -1,5 +1,57 @@
 var $ = jQuery;
+
 jQuery(function ($) {
+
+    const autoCompleteJS = new autoComplete({
+        selector: ".sf-field-search",
+        placeHolder: "Search for Food...",
+        data: {
+            src: [
+                { "food": "Sauce - Thousand Island" },
+                { "food": "Wild Boar - Tenderloin" },
+                { "food": "Goat - Whole Cut" }
+            ],
+            keys: ["food"],
+            cache: true
+        },
+        resultsList: {
+            element: (list, data) => {
+                if (!data.results.length) {
+                    // Create "No Results" message element
+                    const message = document.createElement("div");
+                    // Add class to the created element
+                    message.setAttribute("class", "no_result");
+                    // Add message text content
+                    message.innerHTML = `<span>Результатів не знайдено<span>`;
+                    // Append message element to the results list
+                    list.prepend(message);
+                }
+            },
+            noResults: true,
+        },
+        resultItem: {
+            highlight: {
+                render: true
+            }
+        }
+    });
+
+    $('.sf-field-search').addEventListener("selection", function (event) {
+        // "event.detail" carries the autoComplete.js "feedback" object
+        const feedback = event.detail.query;
+
+        $.ajax({
+            type: "POST",
+            url: ajaxurl,
+            data: {
+                action : 'save_this_search',
+                search_name: feedback
+            },
+            success: function(data) {
+                console.log(data);
+            }
+        });
+    });
 
     $('body').on('click', function (e) {
         if (!$('.home-filter.visible').length || $(e.target).closest('#filter-btn').length) return;
@@ -60,25 +112,24 @@ jQuery(function ($) {
     })
 
 
-
-    if(localStorage.getItem('strana_golosovanii')) {
+    if (localStorage.getItem('strana_golosovanii')) {
         let name = JSON.parse(localStorage.getItem('strana_golosovanii'));
         $("#country_selector").countrySelect({
             defaultCountry: name.iso2,
         });
         $(`.sf-field-taxonomy-strana_golosovaniia label:contains(${name.name})`).prev().click();
-    }else {
+    } else {
         $("#country_selector").countrySelect({});
     }
 
     $('#country_selector').on('change input', function (e) {
 
-        let name =  $('#country_selector').countrySelect("getSelectedCountryData");
+        let name = $('#country_selector').countrySelect("getSelectedCountryData");
         if (name.iso2 == 'reset') {
             console.log('reset')
             $(`.sf-field-taxonomy-strana_golosovaniia input`).prop('checked', false);
             location.reload();
-        }else {
+        } else {
             localStorage.setItem('strana_golosovanii', JSON.stringify(name));
             $(`.sf-field-taxonomy-strana_golosovaniia input`).prop('checked', false);
             $(`.sf-field-taxonomy-strana_golosovaniia label:contains(${name.name})`).prev().click();
@@ -106,60 +157,45 @@ jQuery(function ($) {
     $('.modal-previewfile').on('hidden.bs.modal', function (e) {
         $(e.target).find('.post-thumb').remove();
     })
+
+    // $('.sf-field-taxonomy-court_region select').on('change', function () {
+    //     let current = $(this).find('option:selected').text();
+    //     $(`.sf-field-taxonomy-court_region_name .chosen-results li`).removeAttr('style');
+    //
+    //     $('.sf-field-taxonomy-court_region_name .chosen-drop').trigger('click')
+    //
+    //     console.log($('.sf-field-taxonomy-court_region_name ul.chosen-results li'));
+    //
+    //
+    //     $('.sf-field-taxonomy-court_region_name ul.chosen-results li.sf-level-0').each(function () {
+    //         if($(this).text() == current) {
+    //             $(this).nextUntil('.sf-level-0').each(function () {
+    //                 $(this).addClass('visible')
+    //             })
+    //         }else {
+    //             $(this).nextUntil('.sf-level-0').each(function () {
+    //                 console.log($(this))
+    //                 $(this).remove();
+    //             })
+    //         }
+    //     })
+    // })
+
+    $('.basic-search .sf-field-submit').before('<a href="?professional=true">Професійний пошук</a>');
+    $('.extended-search .sf-field-submit').before('<a href="'+window.location.origin+'" >Стандартний пошук</a>');
+
 })
 
-function showFlags() {
-    setTimeout(() => {
-        $('.selected-flag').trigger('click');
-    }, 10)
-}
+jQuery(window).ready(function () {
+    // jQuery('.sf-field-taxonomy-decisions_branch:nth-child(2) select').select2();
+    // jQuery('.sf-field-taxonomy-decisions_branch select').select2('open');
+    // jQuery('.sf-field-taxonomy-decisions_branch select').select2('close');
+})
 
 function toggleHasChildren(tthis) {
     if (tthis.find('ul').length) tthis.addClass('has-children');
 }
 
-function registrationPopup(event) {
-    event.preventDefault();
-    $('.rcl-register').click();
-    return false;
-}
-
 function hideFilter() {
     $('.home-filter').removeClass('visible');
-}
-
-function shareOpen() {
-    document.querySelector('#a2apage_show_more_less').click();
-}
-
-function triggerLike(event) {
-    $(event.target).closest('.bottom-share-btn').find('.wp_ulike_btn').trigger('click');
-}
-
-function checkAllCountries(event) {
-    $('.all-countries-checker').toggleClass('active')
-    if ($(event.target).hasClass('active')) {
-        $('.taxonomy-countries .rcl-checkbox-box input[type=checkbox]').prop('checked', true)
-    } else {
-        $('.taxonomy-countries .rcl-checkbox-box input[type=checkbox]').prop('checked', false)
-    }
-}
-
-function thumbnailUploader(tthis) {
-    let fileurl = $('#yvppavpyvp_16').val();
-    let fileid, iframeurl;
-    if (fileurl.includes('google.com')) {
-        fileid = getIdFromUrl(fileurl)[0];
-        iframeurl = `https://drive.google.com/file/d/${fileid}/preview?usp=drive_web`;
-    } else {
-        iframeurl = fileurl;
-    }
-    $('.post-thumb').attr('src', iframeurl).css('display', 'block');
-    $('.modal-previewfile .modal-body').append($('.post-thumb').clone());
-    let myModal = new bootstrap.Modal(document.querySelector('.modal-previewfile'));
-    myModal.toggle();
-}
-
-function getIdFromUrl(url) {
-    return url.match(/[-\w]{25,}/);
 }

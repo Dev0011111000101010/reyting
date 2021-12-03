@@ -2,16 +2,11 @@
 add_action( 'init', 'register_post_types' );
 function register_post_types() {
 	register_post_type( 'users_filter', [
-		'label'             => null,
 		'labels'            => [
 			'name'          => 'Юзеры', // основное название для типа записи
 			'singular_name' => 'Юзеры', // название для одной записи этого типа
 		],
-		'description'       => '',
 		'public'            => true,
-		'show_in_nav_menus' => false,
-		'show_ui'           => true,
-		'show_in_admin_bar' => false
 	] );
 	register_post_type( 'court_decisions', [
 		'label'         => null,
@@ -50,8 +45,7 @@ function register_post_types() {
 add_action( 'init', 'create_taxonomy' );
 function create_taxonomy() {
 
-	// список параметров: wp-kama.ru/function/get_taxonomy_labels
-	register_taxonomy( 'decisions_branch', [ 'court_decisions' ], [
+	register_taxonomy( 'decisions_branch', [ 'users_filter' ], [
 		'label'        => '',
 		// определяется параметром $labels->name
 		'labels'       => [
@@ -62,7 +56,7 @@ function create_taxonomy() {
 		'description'  => '',
 		// описание таксономии
 		'public'       => true,
-		'hierarchical' => false,
+		'hierarchical' => true,
 
 		'rewrite'           => true,
 		'capabilities'      => array(),
@@ -77,7 +71,7 @@ function create_taxonomy() {
 		// '_builtin'              => false,
 		//'update_count_callback' => '_update_post_term_count',
 	] );
-	// список параметров: wp-kama.ru/function/get_taxonomy_labels
+
 	register_taxonomy( 'court_region_name', [ 'court_decisions' ], [
 		'label'        => '',
 		// определяется параметром $labels->name
@@ -85,6 +79,32 @@ function create_taxonomy() {
 			'name'          => 'Суд',
 			'singular_name' => 'Суд',
 			'menu_name'     => 'Суды',
+		],
+		'description'  => '',
+		// описание таксономии
+		'public'       => true,
+		'hierarchical' => true,
+
+		'rewrite'           => true,
+		'capabilities'      => array(),
+		'meta_box_cb'       => null,
+		// html метабокса. callback: `post_categories_meta_box` или `post_tags_meta_box`. false — метабокс отключен.
+		'show_admin_column' => false,
+		// авто-создание колонки таксы в таблице ассоциированного типа записи. (с версии 3.5)
+		'show_in_rest'      => null,
+		// добавить в REST API
+		'rest_base'         => null,
+		// $taxonomy
+		// '_builtin'              => false,
+		//'update_count_callback' => '_update_post_term_count',
+	] );
+	register_taxonomy( 'court_region', [ 'court_decisions' ], [
+		'label'        => '',
+		// определяется параметром $labels->name
+		'labels'       => [
+			'name'          => 'Регион Суда',
+			'singular_name' => 'Регион Суда',
+			'menu_name'     => 'Регион суда',
 		],
 		'description'  => '',
 		// описание таксономии

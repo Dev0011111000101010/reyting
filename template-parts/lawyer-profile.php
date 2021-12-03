@@ -1,13 +1,19 @@
 <?php
 global $user_ID, $user_LK;
-$truthy                  = __( 'Практикує', 'referendum' );
-$falsy                   = __( 'Практика відсутня', 'referendum' );
-$usedata                 = get_userdata( $user_LK );
-$name                    = $usedata->first_name ? $usedata->first_name : __( 'Не задано', 'referendum' );
-$surname                 = $usedata->last_name ? $usedata->last_name : __( 'Не задано', 'referendum' );
-$criminal                = [
-	'practise'   => true ? $truthy : $falsy,
-	'totalcount' => 12
+$truthy   = TRUTHY;
+$falsy    = FALSY;
+$fields = get_post_meta(getUserPage($user_LK));
+$justice_kinds = array_values($fields['justice_kind']);
+
+$usedata  = get_userdata( $user_LK );
+$fullname = $usedata->display_name ? $usedata->display_name : __( 'Не задано', 'referendum' );
+$price    = [
+	'price' => 9,
+	'why'   => false
+];
+$criminal = [
+	'practise'   => $falsy,
+	'totalcount' => $fields['justice_2_count'][0]
 ];
 //$criminalprofessional    = [
 //	[
@@ -19,15 +25,15 @@ $criminalprofessional    = [
 	[
 		'article'    => 'Крадіжка п. 1 ст. 185',
 		'totalcount' => '10',
-        'courts'=> [
-                'Окружний адміністративний суд м.Києва'=>'2',
-                'Печерський районний суд м.Києва' => '8'
-        ]
+		'courts'     => [
+			'Окружний адміністративний суд м.Києва' => '2',
+			'Печерський районний суд м.Києва'       => '8'
+		]
 	]
 ];
 $civil                   = [
-	'practise'   => true ? $truthy : $falsy,
-	'totalcount' => 1
+	'practise'   => $falsy,
+	'totalcount' => $fields['justice_1_count'][0]
 ];
 $civilprofessional       = [];
 $admincupap              = [
@@ -41,8 +47,8 @@ $againsstate             = [
 ];
 $againsstateprofessional = [];
 $commercial              = [
-	'practise'   => true ? $truthy : $falsy,
-	'totalcount' => 4
+	'practise'   => $falsy,
+	'totalcount' => $fields['justice_3_count'][0]
 ];
 $commercialprofessional  = [];
 $casesbyyears            = [ 2017 => 2, 2018 => 20, 2019 => 3, 2020 => 11, 2021 => 1 ];
@@ -52,23 +58,23 @@ $lawyerssertificate   = [ 'active' => true, 'issuedate' => '03.02.2012' ];
 $arbitragesertificate = [ 'active' => false, 'validstart' => '03.02.2012', 'validend' => '05.03.2019' ];
 $privateexecutor      = [ 'active' => false ];
 $professcourt         = 'Окружний адміністративний суд міста Києва';
+
+foreach ($justice_kinds as $justice_kind) {
+	switch ($justice_kind) {
+		case "1": $civil['practise'] = $truthy;  break;
+		case "2": $criminal['practise'] = $truthy; break;
+		case "3": $commercial['practise'] = $truthy; break;
+	}
+}
 ?>
 <div class="lawyer-profile">
     <h3><?php esc_html_e( 'Контактні дані', 'referendum' ); ?></h3>
     <div class="lawyer-profile-field">
         <div class="lawyer-field-label">
-			<?php esc_html_e( 'Ім\'я', 'referendum' ); ?>
+			<?php esc_html_e( 'ПІБ', 'referendum' ); ?>
         </div>
         <div class="lawyer-field-value">
-			<?= $name ?>
-        </div>
-    </div>
-    <div class="lawyer-profile-field">
-        <div class="lawyer-field-label">
-			<?php esc_html_e( 'Прізвище', 'referendum' ); ?>
-        </div>
-        <div class="lawyer-field-value">
-			<?= $surname ?>
+			<?= $fullname ?>
         </div>
     </div>
     <hr>
@@ -97,6 +103,16 @@ $professcourt         = 'Окружний адміністративний су�
 			<?php echo sertificateActivity( $privateexecutor ); ?>
         </div>
     </div>
+
+    <div class="lawyer-profile-field">
+        <div class="lawyer-field-label">
+			<?php esc_html_e( 'Цінова категорія', 'referendum' ); ?>
+        </div>
+        <div class="lawyer-field-value">
+			<?php echo countPriceSegment( $price ); ?>
+        </div>
+    </div>
+
 
     <hr>
     <h3><?php esc_html_e( 'Дані про діяльність адвоката', 'referendum' ); ?></h3>
@@ -379,7 +395,7 @@ $professcourt         = 'Окружний адміністративний су�
 				<?php esc_html_e( 'Кримінальні', 'referendum' ); ?> (<?= $criminal['totalcount'] ?>)
             </div>
             <div class="lawyer-field-value">
-                <?= professionalSector($criminalprofessional); ?>
+				<?= professionalSector( $criminalprofessional ); ?>
             </div>
         </div>
 	<?php endif; ?>
@@ -390,7 +406,7 @@ $professcourt         = 'Окружний адміністративний су�
                 (<?= $againsstate['totalcount'] ?>)
             </div>
             <div class="lawyer-field-value">
-	            <?= professionalSector($againsstateprofessional); ?>
+				<?= professionalSector( $againsstateprofessional ); ?>
             </div>
         </div>
 	<?php endif; ?>
@@ -400,7 +416,7 @@ $professcourt         = 'Окружний адміністративний су�
 				<?php esc_html_e( 'Цивільні', 'referendum' ); ?> (<?= $civil['totalcount'] ?>)
             </div>
             <div class="lawyer-field-value">
-	            <?= professionalSector($civilprofessional); ?>
+				<?= professionalSector( $civilprofessional ); ?>
             </div>
         </div>
 	<?php endif; ?>
@@ -411,7 +427,7 @@ $professcourt         = 'Окружний адміністративний су�
                 (<?= $admincupap['totalcount'] ?>)
             </div>
             <div class="lawyer-field-value">
-	            <?= professionalSector($admincupapprofessional); ?>
+				<?= professionalSector( $admincupapprofessional ); ?>
             </div>
         </div>
 	<?php endif; ?>

@@ -44,6 +44,7 @@ get_header();
                     <div id="posts-list">
 						<?php
 						global $wp_query;
+						var_dump(get_term_meta(get_queried_object_id()));
 						$query =& $wp_query; ?>
 						<?php include "search-filter/results.php"; ?>
                     </div>

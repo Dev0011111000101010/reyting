@@ -522,6 +522,168 @@ a.recall-button, span.recall-button, .recall-button.rcl-upload-button, input[typ
   }
 }
 
+.searchandfilter {
+  li[data-sf-field-input-type="select"][data-sf-field-type="sort_order"] {
+    display: inline-block;
+    width: 50%;
+  }
+
+  li[data-sf-field-input-type="checkbox"],
+  li[data-sf-field-input-type="range-slider"] {
+    display: inline-block;
+    width: 33.3%;
+  }
+
+  li[data-sf-field-input-type="checkbox"] {
+    ul > li {
+      display: initial;
+
+      & + li {
+        margin-left: 10px;
+      }
+    }
+  }
+
+  //li.sf-field-post-meta-_menu_item_xfn {
+  //  width: 100%;
+  //}
+
+  .chosen-container {
+    width: 100% !important;
+  }
+
+  & > ul {
+    padding: 10px;
+  }
+
+  .sf-field-sort_order + .sf-field-taxonomy-court_region {
+    .chosen-drop {
+      .sf-level-1 {
+        display: none;
+      }
+    }
+  }
+
+  .sf-field-taxonomy-court_region_name {
+    .chosen-drop {
+
+    }
+  }
+
+  .chosen-container-single {
+    .chosen-single {
+      background: #fff;
+    }
+  }
+}
+
+.extended-search, .extended-search-results {
+  display: none;
+}
+
+.sf-field-post-meta-_edit_lock {
+  width: 100%;
+
+  label {
+    width: 100%;
+  }
+}
+
+.autoComplete_wrapper {
+  width: 100%;
+}
+
+.basic-search {
+  .searchandfilter {
+    li[data-sf-field-input-type=select][data-sf-meta-type=choice] {
+      width: 100%;
+    }
+
+    label {
+      width: 100%;
+    }
+  }
+}
+
+.sf-field-taxonomy-justice_kinds {
+  display: none !important;
+}
+
+body.professional-search {
+  .basic-search, .basic-search-results {
+    display: none;
+  }
+
+  .extended-search, .extended-search-results {
+    display: block;
+  }
+}
+
+.list-usercards {
+  margin: 25px 0;
+  border-radius: 15px;
+  background: rgb(225, 225, 225);
+  border: 2px solid ButtonShadow;
+
+  .list-usercard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &>div {
+      padding: 2px 10px 2px 10px;
+    }
+
+    .usercard-fio {
+      max-width: 100px;
+      flex-basis: 100px;
+    }
+
+    .usercard-maincat {
+      max-width: 150px;
+      flex-basis: 150px;
+    }
+
+    .usercard-mainprofy {
+      flex-grow: 1;
+    }
+
+    .usercard-licenses {
+      max-width: 100px;
+      flex-basis: 100px;
+    }
+
+    .usercard-acquittal {
+      max-width: 150px;
+      flex-basis: 150px;
+    }
+  }
+
+  .list-usercard-top {
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .list-usercard:not(.list-usercard-top) {
+    background: #fff;
+    text-align: left;
+
+    .usercard-acquittal {
+      text-align: center;
+    }
+  }
+
+  .list-usercard:not(.list-usercard-top):last-child {
+    border-radius: 0 0 15px 15px;
+  }
+}
+
+.wp-pagenavi {
+  a, span {
+    border: none;
+  }
+}
+
 @media (min-width: 979px) {
   .col-lg-4 {
     flex: 0 0 auto;
@@ -537,6 +699,12 @@ a.recall-button, span.recall-button, .recall-button.rcl-upload-button, input[typ
   }
   .container {
     max-width: 960px
+  }
+}
+
+@media (max-width: 992px) {
+  .searchandfilter li[data-sf-field-input-type=range-slider] {
+    width: 100%;
   }
 }
 
@@ -601,9 +769,50 @@ a.recall-button, span.recall-button, .recall-button.rcl-upload-button, input[typ
   }
 }
 
+@media (max-width: 768px) {
+  .searchandfilter {
+    li[data-sf-field-input-type="range-slider"],
+    li[data-sf-field-input-type="checkbox"] {
+      width: 100%;
+    }
+
+    li[data-sf-field-input-type="select"] {
+      width: 50%;
+    }
+
+    li[data-sf-field-input-type=select][data-sf-meta-type=choice] {
+      width: 100%;
+    }
+  }
+}
+
 @media (max-width: 600px) {
   nav .rcb_right_menu {
     margin: 0 5px 0 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .searchandfilter {
+    li[data-sf-field-input-type="range-slider"] {
+      width: 100%;
+    }
+
+    li[data-sf-field-input-type="select"] {
+      width: 100%;
+    }
+
+    li[data-sf-field-input-type=select][data-sf-meta-type=choice],
+    li[data-sf-field-input-type=select][data-sf-field-type=sort_order],
+    li[data-sf-field-input-type=checkbox] {
+      width: 100%;
+    }
+
+    li[data-sf-field-input-type="select"] {
+      select, label {
+        width: 100%;
+      }
+    }
   }
 }
 
@@ -655,6 +864,7 @@ main {
 .searchandfilter {
   select.sf-input-select {
     padding: 10px 0;
+    width: 100%;
   }
 }
 
@@ -671,8 +881,20 @@ main {
   font-size: 1.75rem;
 }
 
+.main-results {
+  padding-top: 25px;
+}
+
 @media (min-width: 1200px) {
   #rcl-office h3 {
     font-size: 1.75rem;
   }
+}
+
+.userlist.rows-list .userlist_top h3 {
+  padding-left: 80px;
+}
+
+option[disabled] {
+  display: none;
 }

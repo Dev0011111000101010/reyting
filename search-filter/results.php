@@ -30,9 +30,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( $query->have_posts() ) {
 	?>
 
-        <div class="found-results">
-            Найдено <?php echo $query->found_posts; ?> Результатов<br/>
-        </div>
+    <div class="found-results">
+        Найдено <?php echo $query->found_posts; ?> Результатов<br/>
+    </div>
 
     <div class="pagination">
 
@@ -47,18 +47,27 @@ if ( $query->have_posts() ) {
 		?>
     </div>
 
-	<?php
-	while ( $query->have_posts() ) {
-		$query->the_post();
-
-		?>
-		<?php get_template_part( 'template-parts/content', 'post' ); ?>
+    <div class="list-usercards">
+        <div class="list-usercard list-usercard-top">
+            <div class="usercard-fio">ФІО</div>
+            <div class="usercard-maincat">Головна категорія справ</div>
+            <div class="usercard-mainprofy">Головна стаття професіоналізму</div>
+            <div class="usercard-licenses">Ліцензії</div>
+            <div class="usercard-acquittal">К-сть виправдальних вироків</div>
+        </div>
         <?php
-	}
-	?>
+		while ( $query->have_posts() ) {
+			$query->the_post();
+
+			?>
+			<?php get_template_part( 'template-parts/content', 'usercard' ); ?>
+			<?php
+		}
+		?>
+    </div>
 
     <div class="pagination text-center">
-        <?php
+		<?php
 		/* example code for using the wp_pagenavi plugin */
 		if ( function_exists( 'wp_pagenavi' ) ) {
 			echo "<br />";
@@ -67,7 +76,12 @@ if ( $query->have_posts() ) {
 		?>
     </div>
 	<?php
-} else {
-	echo "Результатов не найдено!";
-}
-?>
+}else {
+    ?>
+
+        <div class="text-center">
+            Результатов не найдено
+        </div>
+
+
+    <?php } ?>

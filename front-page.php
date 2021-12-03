@@ -17,9 +17,29 @@ get_header();
     <main class="home-main">
         <div class="container">
             <div id="main-filter">
-				<?php echo do_shortcode( '[searchandfilter id="18"]' ); ?>
+				<?php if ( $_GET['professional'] == 'true' ) : ?>
+                    <div class="extended-search">
+						<?php echo do_shortcode( '[searchandfilter id="18"]' ); ?>
+                    </div>
+				<?php else: ?>
+                    <div class="basic-search">
+						<?php echo do_shortcode( '[searchandfilter id="289"]' ); ?>
+                    </div>
+				<?php endif; ?>
+            </div>
+            <div class="main-results">
+				<?php if ( $_GET['professional'] == 'true' ) : ?>
+                    <div class="extended-search-results">
+						<?php echo do_shortcode( '[searchandfilter id="18" show="results"]' ); ?>
+                    </div>
+				<?php else: ?>
+                    <div class="basic-search-results">
+						<?php echo do_shortcode( '[searchandfilter id="289" show="results"]' ); ?>
+                    </div>
+				<?php endif; ?>
             </div>
         </div>
     </main>
+
 <?php
 get_footer();

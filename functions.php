@@ -137,15 +137,19 @@ add_action( 'widgets_init', 'referendum_widgets_init' );
  * Enqueue scripts and styles.
  */
 function referendum_scripts() {
+	wp_enqueue_script( 'select-js', 'https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/10.2.6/autoComplete.min.js', array('jquery', 'bootstrap-js') );
+
 	wp_enqueue_style( 'bootstrap-css', get_template_directory_uri() . '/assets/css/bootstrap.min.css' );
 	wp_enqueue_style( 'country-select', get_template_directory_uri() . '/assets/css/countrySelect.css' );
 
-	wp_enqueue_script( 'bootstrap-js', get_template_directory_uri() . '/assets/js/bootstrap.min.js' );
+	wp_enqueue_style( 'select-css', 'https://cdnjs.cloudflare.com/ajax/libs/tarekraafat-autocomplete.js/10.2.6/css/autoComplete.min.css' );
+
+	wp_enqueue_script( 'bootstrap-js', get_template_directory_uri() . '/assets/js/bootstrap.min.js', array('jquery') );
 	wp_enqueue_script( 'country-select', get_template_directory_uri() . '/assets/js/countrySelect.min.js', array( 'jquery' ) );
 
 	wp_enqueue_script( 'script-js', get_template_directory_uri() . '/assets/js/script.js', array(
-		'jquery',
-		'country-select'
+		'country-select',
+		'select-js',
 	) );
 
 	wp_enqueue_style( 'referendum-css', get_stylesheet_uri(), array() );
@@ -155,6 +159,12 @@ function referendum_scripts() {
 }
 
 add_action( 'wp_enqueue_scripts', 'referendum_scripts' );
+
+function admin_styl() {
+	wp_enqueue_style( 'admin-css', get_template_directory_uri() . '/admin-styles.css' );
+}
+
+add_action('admin_enqueue_scripts', 'admin_styl');
 
 function add_additional_class_on_li( $classes, $item, $args ) {
 	if ( isset( $args->add_li_class ) ) {
@@ -175,28 +185,6 @@ function add_menu_link_class( $atts, $item, $args ) {
 }
 
 add_filter( 'nav_menu_link_attributes', 'add_menu_link_class', 1, 3 );
-
-add_filter( 'comment_form_submit_button', function () {
-
-	return '<input name="submit" type="submit" id="submit" class="submit btn btn-orange" value="Отправить комментарий">';
-} );
-
-add_filter( 'comment_form_default_fields', function ( $fields ) {
-	unset( $fields['url'] );
-	$fields['author'] = '<div class="form-group mb-2">' . '<label for="author">' . __( 'Name' ) . ' <span class="required">*</span></label> ' .
-	                    '<input id="author" name="author" type="text" class="form-control" size="30" maxlength="245" /></div>';
-	$fields['email']  = '<div class="form-group mb-2"><label for="email">' . __( 'Email' ) . ' <span class="required">*</span></label> ' .
-	                    '<input id="email" name="email" class="form-control" type="email" size="30" maxlength="100" aria-describedby="email-notes"/></div>';
-
-	return $fields;
-} );
-
-add_filter( 'comment_form_defaults', function ( $fields ) {
-//	var_dump($fields);
-	$fields['comment_field'] = '<div class="form-group mb-2"><label for="comment">' . _x( 'Comment', 'noun' ) . '</label> <textarea id="comment" name="comment" class="form-control" cols="45" rows="8" maxlength="65525" required="required"></textarea></div>';
-
-	return $fields;
-} );
 
 remove_action( 'set_comment_cookies', 'wp_set_comment_cookies', 10, 3 );
 
@@ -231,11 +219,11 @@ register_taxonomy( 'countries', [ 'post' ], [
 	// добавить в REST API
 ] );
 
-add_filter( 'rcl_public_form_primary_buttons', function ( $data ) {
-	$data['publish']['class'] = 'btn btn-blue';
-
-	return $data;
-} );
+//add_filter( 'rcl_public_form_primary_buttons', function ( $data ) {
+//	$data['publish']['class'] = 'btn btn-blue';
+//
+//	return $data;
+//} );
 
 //require_once RCL_PATH . 'classes/class-rcl-users-list.php';
 
@@ -244,87 +232,87 @@ require "functions/taxonomies.php";
 //require "functions/field-group.php";
 
 
-add_shortcode( 'referendum_userlist', 'referendum_userlist' );
-function referendum_userlist( $atts ) {
-	global $rcl_user, $rcl_users_set, $user_ID;
-
-
-	$users = new Referendum_Users_List( $atts );
-
-	$count_users = false;
-
-	if ( ! isset( $atts['number'] ) ) {
-
-		$count_users = $users->count();
-
-		$id_pager = ( $users->id ) ? 'rcl-users-' . $users->id : 'rcl-users';
-
-		$pagenavi = new Rcl_PageNavi( $id_pager, $count_users, array( 'in_page' => $users->query['number'] ) );
-
-		$users->query['offset'] = $pagenavi->offset;
-	}
-
-	$timecache = ( $user_ID && $users->query['number'] == 'time_action' ) ? rcl_get_option( 'timeout', 600 ) : 0;
-
-	$rcl_cache = new Rcl_Cache( $timecache );
-
-	if ( $rcl_cache->is_cache ) {
-		if ( isset( $users->id ) && $users->id == 'rcl-online-users' ) {
-			$string = json_encode( $users );
-		} else {
-			$string = json_encode( $users->query );
-		}
-
-		$file = $rcl_cache->get_file( $string );
-
-		if ( ! $file->need_update ) {
-
-			$users->remove_filters();
-
-			return $rcl_cache->get_cache();
-		}
-	}
-
-	$usersdata = $users->get_users();
-
-	$userlist = $users->get_filters( $count_users );
-
-	$userlist .= '<div class="rcl-userlist"><div class="container">';
-
-	if ( ! $usersdata ) {
-		$userlist .= rcl_get_notice( [ 'text' => __( 'Users not found', 'wp-recall' ) ] );
-	} else {
-
-		if ( ! isset( $atts['number'] ) && $pagenavi->in_page ) {
-			$userlist .= $pagenavi->pagenavi();
-		}
-
-		$userlist .= '<div class="userlist ' . $users->template . '-list">';
-
-		$rcl_users_set = $users;
-
-		foreach ( $usersdata as $rcl_user ) {
-			$users->setup_userdata( $rcl_user );
-			$userlist .= rcl_get_include_template( 'user-' . $users->template . '.php' );
-		}
-
-		$userlist .= '</div>';
-
-		if ( ! isset( $atts['number'] ) && $pagenavi->in_page ) {
-			$userlist .= $pagenavi->pagenavi();
-		}
-	}
-
-	$userlist .= '</div></div>';
-
-	$users->remove_filters();
-
-	if ( $rcl_cache->is_cache ) {
-		$rcl_cache->update_cache( $userlist );
-	}
-
-	return $userlist;
-}
+//add_shortcode( 'referendum_userlist', 'referendum_userlist' );
+//function referendum_userlist( $atts ) {
+//	global $rcl_user, $rcl_users_set, $user_ID;
+//
+//
+//	$users = new Referendum_Users_List( $atts );
+//
+//	$count_users = false;
+//
+//	if ( ! isset( $atts['number'] ) ) {
+//
+//		$count_users = $users->count();
+//
+//		$id_pager = ( $users->id ) ? 'rcl-users-' . $users->id : 'rcl-users';
+//
+//		$pagenavi = new Rcl_PageNavi( $id_pager, $count_users, array( 'in_page' => $users->query['number'] ) );
+//
+//		$users->query['offset'] = $pagenavi->offset;
+//	}
+//
+//	$timecache = ( $user_ID && $users->query['number'] == 'time_action' ) ? rcl_get_option( 'timeout', 600 ) : 0;
+//
+//	$rcl_cache = new Rcl_Cache( $timecache );
+//
+//	if ( $rcl_cache->is_cache ) {
+//		if ( isset( $users->id ) && $users->id == 'rcl-online-users' ) {
+//			$string = json_encode( $users );
+//		} else {
+//			$string = json_encode( $users->query );
+//		}
+//
+//		$file = $rcl_cache->get_file( $string );
+//
+//		if ( ! $file->need_update ) {
+//
+//			$users->remove_filters();
+//
+//			return $rcl_cache->get_cache();
+//		}
+//	}
+//
+//	$usersdata = $users->get_users();
+//
+//	$userlist = $users->get_filters( $count_users );
+//
+//	$userlist .= '<div class="rcl-userlist"><div class="container">';
+//
+//	if ( ! $usersdata ) {
+//		$userlist .= rcl_get_notice( [ 'text' => __( 'Users not found', 'wp-recall' ) ] );
+//	} else {
+//
+//		if ( ! isset( $atts['number'] ) && $pagenavi->in_page ) {
+//			$userlist .= $pagenavi->pagenavi();
+//		}
+//
+//		$userlist .= '<div class="userlist ' . $users->template . '-list">';
+//
+//		$rcl_users_set = $users;
+//
+//		foreach ( $usersdata as $rcl_user ) {
+//			$users->setup_userdata( $rcl_user );
+//			$userlist .= rcl_get_include_template( 'user-' . $users->template . '.php' );
+//		}
+//
+//		$userlist .= '</div>';
+//
+//		if ( ! isset( $atts['number'] ) && $pagenavi->in_page ) {
+//			$userlist .= $pagenavi->pagenavi();
+//		}
+//	}
+//
+//	$userlist .= '</div></div>';
+//
+//	$users->remove_filters();
+//
+//	if ( $rcl_cache->is_cache ) {
+//		$rcl_cache->update_cache( $userlist );
+//	}
+//
+//	return $userlist;
+//}
 
 add_filter( 'users_search_form_rcl', function ( $data ) {
 	$newdata = '<div class="container">' . $data . '</div>';
@@ -399,19 +387,18 @@ function referendum_get_author_block() {
 	return $content;
 }
 
-
 add_filter( 'rcl_tab', 'edit_profile_tab_data' );
 function edit_profile_tab_data( $data ) {
+	global $user_ID, $rcl_office;
 	if ( $data['id'] != 'profile' ) {
 		return $data;
 	}
-	global $user_ID, $rcl_office;
 	if ( $rcl_office != $user_ID ) {
 		$data['content'][0]['callback'] = array(
 			'name' => 'my_custom_function',
 			'args' => @array( $arg_1, $arg_2 ),
 		);
-		$data['public']                 = 1;
+		$data['public'] = 1;
 	}
 
 	return $data;
@@ -420,7 +407,6 @@ function edit_profile_tab_data( $data ) {
 function my_custom_function( $arg_1, $arg_2 ) {
 	global $user_ID, $user_LK;
 	if ( $user_ID !== $user_LK ) {
-		$usedata    = get_userdata( $user_LK );
 		$returninfo = load_template_part( 'template-parts/lawyer', 'profile' );
 
 		return $returninfo;
@@ -473,6 +459,7 @@ function justiceSectorsWork( $item ) {
 }
 
 define( 'FALSY', __( 'Практика відсутня', 'referendum' ) );
+define( 'TRUTHY', __( 'Практикує', 'referendum' ) );
 
 function professionalSector( $item, $falsy = FALSY ) {
 	ob_start();
@@ -500,8 +487,8 @@ function my_user_registration( $user_id ) {
 	$user = new WP_User( $user_id );
 
 	$p = wp_insert_post( array(
-		'post_title' => $user->user_nicename,
-		'post_type'  => 'users_filter',
+		'post_title'  => $user->user_nicename,
+		'post_type'   => 'users_filter',
 		'post_status' => 'publish'
 	) );
 
@@ -510,12 +497,286 @@ function my_user_registration( $user_id ) {
 
 add_action( 'delete_user', 'user_deletion' );
 function user_deletion( $user_id ) {
-	$p = new WP_Query(array(
-		'post_type' => 'users_filter',
-		'meta_key' => '_linked_user',
+	$p     = new WP_Query( array(
+		'post_type'  => 'users_filter',
+		'meta_key'   => '_linked_user',
 		'meta_value' => $user_id,
-		'fields'=>'ids',
-	));
+		'fields'     => 'ids',
+	) );
 	$spost = $p->posts[0];
-	wp_delete_post($spost);
+	wp_delete_post( $spost );
 }
+
+function countPriceSegment( $price ) {
+	ob_start();
+
+	switch ( $price['price'] ) {
+		case ($price['price'] == 0):
+			echo "Безоплатно ";
+			break;
+		case ($price['price'] < 11):
+			echo "Дешево (1~10$/година) ";
+			break;
+		case ($price['price'] < 31):
+			echo "Середні ціни (10~30$/година) ";
+			break;
+		case ($price['price'] > 30):
+			echo "VIP-сегмент ";
+			break;
+		default:
+			echo "Безкоштовно ";
+	}
+
+	if ( $price['why'] ) {
+		echo $price['why'];
+	}
+
+	$var = ob_get_contents();
+	ob_end_clean();
+
+	return $var;
+}
+
+function getUserPage($uid) {
+	$p = new WP_Query( array(
+		'post_type'  => 'users_filter',
+		'meta_key'   => '_linked_user',
+		'meta_value' => $uid,
+		'fields'     => 'ids',
+	) );
+
+	$userpageid = $p->posts[0];
+
+	return $userpageid;
+}
+
+add_filter('body_class', function ($classes) {
+	if($_GET['professional'] == 'true') {
+		$classes[] = 'professional-search';
+	}
+
+	return $classes;
+});
+
+add_filter('user_search_columns', 'user_search_columns_bd' , 10, 3);
+
+function user_search_columns_bd($search_columns){
+
+	if(!in_array('display_name', $search_columns)){
+		$search_columns[] = 'display_name';
+	}
+	return $search_columns;
+}
+
+
+//require ABSPATH . '/vendor/autoload.php';
+//
+////$files        = scandir( 'E:\OSPanel\domains\windows.parser\converted10k' );
+//$importedfile = __DIR__ . '/documents_part1_0.xlsx';
+//
+//use PhpOffice\PhpSpreadsheet\Spreadsheet;
+//
+//$spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load( $importedfile );
+//$sheetData   = $spreadsheet->getActiveSheet()->toArray();
+//
+//function translit( $value ) {
+//	$converter = array(
+//		'а' => 'a',
+//		'б' => 'b',
+//		'в' => 'v',
+//		'г' => 'g',
+//		'д' => 'd',
+//		'е' => 'e',
+//		'ё' => 'e',
+//		'ж' => 'zh',
+//		'з' => 'z',
+//		'и' => 'i',
+//		'й' => 'i',
+//		'к' => 'k',
+//		'л' => 'l',
+//		'м' => 'm',
+//		'н' => 'n',
+//		'о' => 'o',
+//		'п' => 'p',
+//		'р' => 'r',
+//		'с' => 's',
+//		'т' => 't',
+//		'у' => 'u',
+//		'ф' => 'f',
+//		'х' => 'kh',
+//		'ц' => 'c',
+//		'ч' => 'ch',
+//		'ш' => 'sh',
+//		'щ' => 'shch',
+//		'ь' => '',
+//		'ы' => 'y',
+//		'ъ' => '',
+//		'є' => 'ie',
+//		'ю' => 'yu',
+//		'я' => 'ya',
+//		'і' => 'i',
+//		'ї' => 'i',
+//
+//		'А' => 'A',
+//		'Б' => 'B',
+//		'В' => 'V',
+//		'Г' => 'G',
+//		'Д' => 'D',
+//		'Е' => 'E',
+//		'Є' => 'Ye',
+//		'Ж' => 'Zh',
+//		'З' => 'Z',
+//		'И' => 'I',
+//		'Й' => 'Y',
+//		'К' => 'K',
+//		'Л' => 'L',
+//		'М' => 'M',
+//		'Н' => 'N',
+//		'О' => 'O',
+//		'П' => 'P',
+//		'Р' => 'R',
+//		'С' => 'S',
+//		'Т' => 'T',
+//		'У' => 'U',
+//		'Ф' => 'F',
+//		'Х' => 'Kh',
+//		'Ц' => 'C',
+//		'Ч' => 'Ch',
+//		'Ш' => 'Sh',
+//		'Щ' => 'Shch',
+//		'Ь' => '',
+//		'Ы' => 'Y',
+//		'Ъ' => '',
+//		'Э' => 'E',
+//		'Ю' => 'Yu',
+//		'Я' => 'Ya',
+//		'I' => 'I',
+//		'Ї' => 'Yi'
+//	);
+//
+//	$value = strtr( $value, $converter );
+//
+//	return $value;
+//}
+//
+//function userCreation($lawyer ) {
+//	preg_match( '/[А-ЯІIЇЄ]\.[А-ЯІIЇЄ]/u', $lawyer, $firstname );
+//	preg_match( '/[А-ЯІIЇЄ][а-яіiїє|А-ЯІIЇЄ]+/u', $lawyer, $lastname );
+//	$username = mb_strtolower( translit( $lastname[0] ) ) . rand( 0, 9 );
+//	$email    = translit( $lastname[0] ) . '@mentorsflow.com';
+//	$uid      = wp_insert_user( array(
+//		'first_name'    => $firstname[0],
+//		'last_name'     => $lastname[0],
+//		'user_email'    => $email,
+//		'user_login'    => $username,
+//		'user_nicename' => $username,
+//		'display_name'  => $lawyer,
+//	) );
+//
+//	$user = new WP_User( $uid );
+//
+//	$user->add_role( 'lawyer' );
+//	$user->remove_role( 'author' );
+//
+//	return $uid;
+//}
+//
+//function writeJusticeKind($userpageid, $justice_kind) {
+//	$justice_kinds = get_post_meta( $userpageid, 'justice_kind' );
+//	$arr = ['1'=>'civil', '2'=>'criminal', '3'=>'commercial'];
+//
+//	if ( ! $justice_kinds[ $justice_kind ] ) {
+//		update_post_meta( $userpageid, 'justice_kind', $justice_kind );
+//	}
+//
+//	if($arr[$justice_kind]) {
+//		$current = (int) get_post_meta($userpageid, 'justice_'.$justice_kind.'_count', true);
+//		if(!$current) {
+//			$current = 1;
+//		}else {
+//			$current+=1;
+//		}
+//		update_post_meta($userpageid, 'justice_'.$justice_kind.'_count', $current);
+//	}
+//}
+//
+//foreach ( $sheetData as $field ) {
+//	$startTime = microtime(true); //get time in micro seconds(1 millionth)
+//	$lawyer       = $field[12];
+//	$casenum      = $field[5];
+//	$justice_kind = $field[3];
+//
+//	if ( ! $lawyer ) {
+//		continue;
+//	}
+//
+//	if ( $casenum === 'cause_num' ) {
+//		continue;
+//	}
+//
+//	$args = array(
+//		'search'        => "$lawyer", // or login or nicename in this example
+//		'search_fields' => array( 'display_name' )
+//	);
+//
+//	$users = new WP_User_Query( $args );
+//
+//	$users = $users->get_results();
+//
+//	if ( !isset( $users[0] ) ) {
+//		$uid = userCreation($lawyer);
+//	}else {
+//		$uid = $users[0]->ID;
+//	}
+//
+//	$userpageid = getUserPage($uid);
+//
+//	writeJusticeKind($userpageid, $justice_kind);
+//
+//	$wpdb->insert( 'lawyers_cases', [ 'lawyer_id' => $uid, 'scase' => $casenum ] );
+//
+//	var_dump($lawyer);
+//
+//	$endTime = microtime(true);
+//}
+//
+//echo "seconds to execute:". ($endTime-$startTime)*100000;
+
+//function delete_all_terms(){
+//	$taxonomy_name = 'decisions_branch';
+//	$terms = get_terms( array(
+//		'taxonomy' => $taxonomy_name,
+//		'hide_empty' => false
+//	) );
+//	foreach ( $terms as $term ) {
+//		wp_delete_term($term->term_id, $taxonomy_name);
+//	}
+//}
+//add_action( 'wp_head', 'delete_all_terms' );
+
+//add_filter('sf_input_object_pre', function ($item) {
+//	var_dump($item);
+//	return $item;
+//});
+
+function save_this_search() {
+	global $wpdb;
+
+//	$my_user_id = get_current_user_id();
+	$search_parameter = $_REQUEST['search_parameter'];
+
+	$wpdb->insert(
+		'search_queries',
+		array(
+			'search_parameter' => $search_parameter,
+		),
+	);
+
+	/*echo 'The search name: '. $search_name;
+	echo 'My user ID: '. $my_user_id;
+	echo 'Id: '. $id;*/
+
+	die();
+}
+add_action('wp_ajax_save_this_search', 'save_this_search');
+add_action('wp_ajax_nopriv_save_this_search', 'save_this_search');
